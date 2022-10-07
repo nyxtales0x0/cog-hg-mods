@@ -12,10 +12,12 @@ const startupObject = JSON.parse(startupString);
 const statsPageBuffer = fs.readFileSync("./choicescript_stats.txt.json");
 const statsPageString = statsPageBuffer.toString();
 const statsPageObject = JSON.parse(statsPageString);
+
 if (statsPageObject.lines[0].includes("nyxmainstats")) {
   log("Cannot edit already modded files.");
   process.exit();
 }
+
 modStatsPage();
 
 const variables = getVariables();
@@ -28,14 +30,15 @@ const modMenu = {
   lines : [],
   labels : {}
 }
+
 createModMenu();
-log("Success.");
 
 
 
 /* ========= FUNCTIONS ========= */
 
 function getVariables() {
+
   const varArray = [];
   const lines = startupObject.lines;
   lines.forEach(line => {
@@ -45,6 +48,7 @@ function getVariables() {
 }
 
 function getNumberVariables() {
+
   const numVarArray = [];
   variables.forEach(line => {
     if (isNumberStat(line)) numVarArray.push(line);
@@ -53,6 +57,7 @@ function getNumberVariables() {
 }
 
 function getBooleanVariables() {
+
   const boolVarArray = [];
   variables.forEach(line => {
     if (isBooleanStat(line)) boolVarArray.push(line);
@@ -61,6 +66,7 @@ function getBooleanVariables() {
 }
 
 function getStringVariables() {
+
   const strVarArray = [];
   variables.forEach(line => {
     if (isStringStat(line)) strVarArray.push(line);
@@ -69,6 +75,7 @@ function getStringVariables() {
 }
 
 function isNumberStat(line) {
+
   const args = line.split(" ");
   if (
     args[2].startsWith("0") ||
@@ -86,6 +93,7 @@ function isNumberStat(line) {
 }
 
 function isBooleanStat(line) {
+
   const args = line.split(" ");
   if (
     args[2] === "false" ||
@@ -95,6 +103,7 @@ function isBooleanStat(line) {
 }
 
 function isStringStat(line) {
+  
   const args = line.split(" ");
   if (
     args[2].startsWith(`"`) &&
@@ -104,6 +113,7 @@ function isStringStat(line) {
 }
 
 function createModMenu() {
+
   indentCounter = 0;
   initiateModMenu();
   addNumberStats();
@@ -111,9 +121,11 @@ function createModMenu() {
   addStringStats();
   adjustLabels(modMenu);
   save(modMenu, "nyxmodmenu.txt.json");
+  log("Success.");
 }
 
 function initiateModMenu() {
+
   modMenu.lines.push(autoIndent(`*label ${modMenuLabel}`));
   modMenu.lines.push(autoIndent("*choice"));
   modMenu.lines.push(autoIndent("#Return to Stats Page"));
@@ -121,6 +133,7 @@ function initiateModMenu() {
 }
 
 function addNumberStats() {
+  
   modMenu.lines.push(autoIndent("#Number Stats"));
   modMenu.lines.push(autoIndent("*label numberstats"));
   modMenu.lines.push(autoIndent("*choice"));
@@ -140,6 +153,7 @@ function addNumberStats() {
 }
 
 function addBooleanStats() {
+
   modMenu.lines.push(autoIndent("#Boolean Stats"));
   modMenu.lines.push(autoIndent("*label booleanstats"));
   modMenu.lines.push(autoIndent("*choice"));
@@ -165,6 +179,7 @@ function addBooleanStats() {
 }
 
 function addStringStats() {
+
   modMenu.lines.push(autoIndent("#String Stats"));
   modMenu.lines.push(autoIndent("*label stringstats"));
   modMenu.lines.push(autoIndent("*choice"));
@@ -184,6 +199,7 @@ function addStringStats() {
 }
 
 function modStatsPage() {
+
   indent = getIndent(statsPageObject);
   if (!indent) indent = "\t";
   statsPageObject.lines.unshift("*label nyxmainstats");
@@ -193,6 +209,7 @@ function modStatsPage() {
 }
 
 function autoIndent(param) {
+
   let str = "";
   for (let i = 0; i < indentCounter; i++) {
     str += indent;
@@ -205,6 +222,7 @@ function autoIndent(param) {
 }
 
 function adjustLabels(sceneObject) {
+
   const labels = {};
   sceneObject.lines.forEach(line => {
     if (line.includes("*label")) {
@@ -217,10 +235,12 @@ function adjustLabels(sceneObject) {
 }
 
 function save(sceneObject, path) {
+
   fs.writeFileSync(`./${path}`, JSON.stringify(sceneObject));
 }
 
 function getIndent(fileObject) {
+
   const line = getSingleIndentedLine(fileObject);
   let str = "";
   if (!line) return "";
@@ -240,6 +260,7 @@ function getIndent(fileObject) {
 }
 
 function getSingleIndentedLine(fileObject) {
+
   const lines = fileObject.lines;
   for (let line of lines) {
     if (line[0] === "*" && (line.includes("*choice") || line.includes("*if") || line.includes("*stat_chart"))) {
@@ -252,6 +273,7 @@ function getSingleIndentedLine(fileObject) {
 }
 
 function addModMenuButton() {
+
   let buttonAlreadyAdded = false;
   for (let i = 0; i < statsPageObject.lines.length; i++) {
     const line = statsPageObject.lines[i];
@@ -293,6 +315,7 @@ function addModMenuButton() {
 }
 
 function getIndentCounter(line) {
+  
   if (!indent) return 0;
   let newLine = line.trimEnd().replaceAll(indent, "^");
   let count = 0;
