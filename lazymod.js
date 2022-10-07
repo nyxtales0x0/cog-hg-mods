@@ -264,8 +264,8 @@ function getSingleIndentedLine(fileObject) {
   const lines = fileObject.lines;
   for (let line of lines) {
     if (line[0] === "*" && (line.includes("*choice") || line.includes("*if") || line.includes("*stat_chart"))) {
-      const LineIndex = lines.indexOf(line);
-      const nextLine = lines[LineIndex + 1];
+      const lineIndex = lines.indexOf(line);
+      const nextLine = lines[lineIndex + 1];
       return nextLine;
     }
     else continue;
